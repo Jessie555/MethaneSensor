@@ -9,6 +9,7 @@ LiquidCrystal_I2C lcd(0x27, 20, 4);
 float sensorValue;
 float sensorVolt;
 float R0;
+
 int killSwitch = 6; // not yet implemented
 float RS_air;
 int sensorPin= A0;
@@ -57,68 +58,64 @@ void setup() {
 }
 
 void loop() {
+  int currTime = millis();
   if(CO2Val < 5000 && R0 < 5000){
     kill = 0;
-    lcd.clear();
-    lcd.print("CO2 Levels: ");
-    lcd.setCursor(0,2);
-    lcd.print("Methane Levels: ");
     if(carbonSensor.dataAvailable()){ // Gets the carbon dioxide values and prints to LCD
-      lcd.setCursor(0, 1);
+     // lcd.setCursor(0, 1);
       CO2Val = carbonSensor.getCO2();
-      lcd.print(CO2Val);
-      delay(100);
-      lcd.print(" PPM");
+     // lcd.print(CO2Val);
+      //lcd.print(" PPM");
      }
-     sensorValue += analogRead(A0); // this takes in the value from the methane sensor
-     sensorValue = sensorValue / 500;
+     sensorValue = analogRead(A0); // this takes in the value from the methane sensor
+     //sensorValue = sensorValue / 500;
      sensorVolt = sensorValue * (5.0 / 1023.0);
      RS_air = ((5.0 * 10.0) / sensorVolt) - 10.0; // alters the analog voltage into PPM
      R0 = RS_air / 4.4;
-
-     lcd.setCursor(0,1); // prints CO2 Values
-     lcd.print(CO2Val);
-     lcd.print(" PPM");
+     if(currTime % 1000 == 0){ // prints time every 1000 milliseconds ( 1 second)
+        lcd.clear();
+        lcd.print("CO2 Levels: ");
+        lcd.setCursor(0,2);
+        lcd.print("Methane Levels: ");
+        lcd.setCursor(0,1); // prints CO2 Values
+        lcd.print(CO2Val);
+     //Serial.print(CO2Val);
+         Serial.print('\n');
+         Serial.print(sensorValue);
+         lcd.print(" PPM");
+        // delay(100);
      
-     lcd.setCursor(0,3);
-     lcd.print(R0);
-     lcd.print(" PPM"); // prints methane values
-    
+         lcd.setCursor(0,3);
+         lcd.print(R0);
+         lcd.print(" PPM"); // prints methane values
+        // delay(100);
+     }
   }
   else{
     lcd.clear();
     if(kill == 0){
       triggerAlarm();
     }
-    lcd.setCursor(0,0);
-    lcd.print("PPM LEVELS TOO HIGH");
-    lcd.setCursor(0,1);
-    lcd.print("CHECK EQUIPMENTS FOR LEAKS");
-    lcd.setCursor(0,2);
-    lcd.print("Press Button to disable alarm");
-    if(digitalRead(killswitch) == HIGH); {// disables alarm
-      beep();
-      kill = 1;
-      lcd.clear();
-      lcd.print("Alarm silenced");
+    if(currTime % 1000 == 0){
+      lcd.setCursor(0,0);
+      lcd.print("PPM LEVELS TOO HIGH");
       lcd.setCursor(0,1);
-      lcd.print("System will reset at acceptable PPM");
+      lcd.print("CHECK EQUIPMENTS FOR LEAKS");
       lcd.setCursor(0,2);
-      lcd.print("CO2: ");
-      lcd.print(CO2Val);
-      lcd.setCursor(0,3);
-      lcd.print(R0);
+      lcd.print("Press Button to disable alarm");
+      if(digitalRead(killSwitch) == HIGH); {// disables alarm
+        beep();
+        kill = 1;
+        lcd.clear();
+        lcd.print("Alarm silenced");
+        lcd.setCursor(0,1);
+        lcd.print("System will reset at acceptable PPM");
+        lcd.setCursor(0,2);
+        lcd.print("CO2: ");
+        lcd.print(CO2Val);
+        lcd.setCursor(0,3);
+        lcd.print(R0);
+      }
     }
-    }
-
-
-  
-
-
-
-
-
-
-
-    
+  }
 }
