@@ -6,6 +6,7 @@
 #include "SparkFun_SCD30_Arduino_Library.h"
 #include "pitches.h"
 Servo shoulder;
+
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 float sensorValue;
 float sensorVolt;
@@ -62,7 +63,7 @@ void setup() {
 void loop() {
   triggerAlarm();
   // read the state of the pushbutton value:
-  if(digitalRead(killswitch)== 1){
+  if(digitalRead(killSwitch)== 1){
     kill = true;
     }
   if(CO2Val < 5000 && R0 < 5000){
@@ -75,11 +76,11 @@ void loop() {
       triggerAlarm();
       } 
      else {
-      lcd.clear()
-      lcd.print("Killswitch Activated")
+      lcd.clear();
+      lcd.print("Killswitch Activated");
       while(reset == false){
         lcd.setCursor(0,1);
-        lcd.print("Click button to reset values")
+        lcd.print("Click button to reset values");
         if(digitalRead(killSwitch) == true){
           reset = true;
           CO2Val = 0;
