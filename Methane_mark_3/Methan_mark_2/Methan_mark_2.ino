@@ -62,15 +62,13 @@ void setup() {
 void loop() {
   int currTime = millis();
   if(CO2Val < 5000 && R0 < 5000){
-    Serial.print(CO2Val);
-    Serial.print('\n');
     kill = 0;
+    digitalWrite(redPin, LOW);
+    digitalWrite(greenPin, HIGH);
     if(carbonSensor.dataAvailable()){ // Gets the carbon dioxide values and prints to LCD
-     // lcd.setCursor(0, 1);
       CO2Val = carbonSensor.getCO2();
      }
      sensorValue = analogRead(A0); // this takes in the value from the methane sensor
-     //sensorValue = sensorValue / 500;
      sensorVolt = sensorValue * (5.0 / 1023.0);
      RS_air = ((5.0 * 10.0) / sensorVolt) - 10.0; // alters the analog voltage into PPM
      R0 = RS_air / 4.4;
@@ -108,6 +106,8 @@ void loop() {
     if(currTime % 1000 == 0 && kill == 0){
       Serial.print("there");
       Serial.print('\n');
+      digitalWrite(redPin, HIGH);
+      digitalWrite(greenPin, LOW);
       lcd.setCursor(0,0);
       lcd.print("PPM LEVELS TOO HIGH");
       lcd.setCursor(0,1);
