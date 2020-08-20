@@ -39,7 +39,7 @@ while True:
             string += chr(n)
     print("TRANSLATED: {}".format(string))
     if string not '':
-        sensor_values = open("Methane_CO2", "a+")
+        sensor_values = open("Methane_CO2.txt", "a+")
         sensor_values.write(string)
         sensor_values.write("\n")
         sensor_values.close();
