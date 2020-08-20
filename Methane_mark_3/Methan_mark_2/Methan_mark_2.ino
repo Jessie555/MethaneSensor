@@ -152,19 +152,6 @@ void loop() {
         lcd.print(R0);
         delay(100);
         }
-    /*if(button == 1); {// disables alarm
-      beep();
-      kill = 1;
-      lcd.clear();
-      lcd.print("Alarm silenced");
-      lcd.setCursor(0,1);
-      lcd.print("System will reset at acceptable PPM");
-      lcd.setCursor(0,2);
-      lcd.print("CO2: ");
-      lcd.print(CO2Val);
-      lcd.setCursor(0,3);
-      lcd.print(R0);
-      }*/
   }
   radio.write(&CO2, sizeof(CO2));
   radio.write(&methane, sizeof(methane));
