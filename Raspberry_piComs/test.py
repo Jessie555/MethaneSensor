@@ -3,9 +3,6 @@ from lib_nrf24 import NRF24
 import time
 import spidev
 
-sensor_values = open("Methane_CO2", "a+")
-
-
 GPIO.setmode(GPIO.BCM)
 
 pipes = [[0xE8, 0xE8, 0xF0, 0xF0,0xE1], [0xF0,0xF0,0xF0,0xF0,0xE1]]
@@ -41,7 +38,10 @@ while True:
         if (n >= 32 and n<=126):
             string += chr(n)
     print("TRANSLATED: {}".format(string))
-    sensor_values.write(string)
-    sensor_values.write("\n")
+    if string not '':
+        sensor_values = open("Methane_CO2", "a+")
+        sensor_values.write(string)
+        sensor_values.write("\n")
+        sensor_values.close();
 
 
