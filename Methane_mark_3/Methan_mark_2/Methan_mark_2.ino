@@ -9,6 +9,8 @@ LiquidCrystal_I2C lcd(0x27, 20, 4);
 float sensorValue;
 float sensorVolt;
 float R0;
+RF24 radio(9,10); // initializes radio for coms
+
 
 const byte killSwitch = 3; // 
 float RS_air;
@@ -45,6 +47,7 @@ void beep(){ // user feedback for pressing button
 
 void setup() {
   Serial.begin(9600); 
+  
   pinMode(redPin, OUTPUT);
   pinMode(killSwitch, INPUT);// sets modes for LEDs and Buttons
   pinMode(greenPin, OUTPUT);
@@ -57,10 +60,24 @@ void setup() {
   lcd.setCursor(0,2);
   lcd.print("Methane Levels: ");
 
+
+  
+  radio.begin()
+  radio.setPALevel(RF24_PA_MAX);
+  radio.setChannel(0x76);
+  radio.openWritingPipe(0xF0F0F0F0E1LL);
+  radio.enableDynamicPayloads();
+  radio.powerUp();
+
 }
 
 void loop() {
   int currTime = millis();
+  String CO2 = "CO2: ";
+  String methane = "CH4: ";
+  CO2 += String(CO2Val);
+  methane += String(R0);
+  radio.
   if(CO2Val < 5000 && R0 < 5000){
     kill = 0;
     digitalWrite(redPin, LOW);
@@ -79,15 +96,11 @@ void loop() {
         lcd.print("Methane Levels: ");
         lcd.setCursor(0,1); // prints CO2 Values
         lcd.print(CO2Val);
-     //Serial.print(CO2Val);
-         
-         lcd.print(" PPM");
-        // delay(1000);
+        lcd.print(" PPM");
      
-         lcd.setCursor(0,3);
-         lcd.print(R0);
-         lcd.print(" PPM"); // prints methane values
-        // delay(100);
+        lcd.setCursor(0,3);
+        lcd.print(R0);
+        lcd.print(" PPM"); // prints methane values
      }
   }
   else{
@@ -153,6 +166,9 @@ void loop() {
       lcd.print(R0);
       }*/
   }
+  radio.write(&CO2, sizeof(CO2));
+  radio.write(&methane, sizeof(methane));
+  
 }
 
 void depress() {
