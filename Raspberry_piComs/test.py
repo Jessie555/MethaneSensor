@@ -3,6 +3,9 @@ from lib_nrf24 import NRF24
 import time
 import spidev
 
+sensor_values = open("Methane_CO2", "a+")
+
+
 GPIO.setmode(GPIO.BCM)
 
 pipes = [[0xE8, 0xE8, 0xF0, 0xF0,0xE1], [0xF0,0xF0,0xF0,0xF0,0xE1]]
@@ -21,28 +24,24 @@ radio.enableDynamicPayloads()
 radio.enableAckPayload()
 
 radio.openReadingPipe(1,pipes[1])
-radio.printDetails()
+#radio.printDetails()
 radio.startListening()
 
 while True:
-    radio.printDetails()
-    print("here")
     while not radio.available(0):
-        print(radio.available(1))
         time.sleep(1/10)
 
     receivedMessage = []
     radio.read(receivedMessage, radio.getDynamicPayloadSize())
-    
-    print("Received: {}".format(receivedMessage))
-
-    print("TRANSLATING RECVEIVED MESSAGE INTO UNICODE CHARACTERS...")
+    #print("Received: {}".format(receivedMessage))
+    #print("TRANSLATING RECVEIVED MESSAGE INTO UNICODE CHARACTERS...")
     string =  ""
 
     for n in receivedMessage:
         if (n >= 32 and n<=126):
             string += chr(n)
     print("TRANSLATED: {}".format(string))
-    print(string)
+    sensor_values.write(string)
+    sensor_values.write("\n")
 
 
